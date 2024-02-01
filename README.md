@@ -1,2 +1,2 @@
-# django-next-fs
+# menu-django-next
 Django &amp; Nextjs fullstack app
