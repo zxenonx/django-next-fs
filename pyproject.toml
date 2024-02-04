@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "menu-django-next"
+version = "0.1.0"
+description = "Fullstack app for a restaurant's menu in Django & Nextjs"
+authors = ["xzenon <xenon.nemrod@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2"
+djangorestframework = "^3.14.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
