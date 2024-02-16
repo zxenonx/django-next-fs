@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import MenuItem
+from .models import Menu
 
 
-class MenuItemSerializer(serializers.ModelSerializer):
+class MenuSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MenuItem
+        model = Menu
         fields = ["id", "name", "price", "created_at", "updated_at"]
         read_only_fields = ["created_at", "updated_at", "id"]
         

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
-from models import Menu
+from menu.models import Menu
 from rest_framework.permissions import AllowAny
-from serializers import MenuSerializer
+from menu.serializers import MenuSerializer
 
 class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
