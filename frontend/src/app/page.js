@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -7,99 +8,120 @@ import { useRouter, useSearchParams } from "next/navigation";
  * @param {number} id ID of the menu item.
  */
 async function deleteMenu(id){
-  const response = await fetch("http://localhost:8000/api/menus/${id}/")
+  const response = await fetch(`http://localhost:8000/api/menus/${id}/`, {
+    method: "DELETE",
+  });
 
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  return Promise.resolve()
 }
 
-export default function Home() {
+/**
+ * Retrieves all menus from the API.
+ * @returns {Promise<Array>} A promise that resolves to an array of menus.
+ * @throws {Error} If the API request fails.
+ */
+async function getAllMenus() {
+  const response = await fetch("http://localhost:8000/api/menus/");
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return response.json();
+}
+
+
+
+/**
+ * Represents a single menu item.
+ * @returns {JSX.Element} JSX representing a single menu item.
+ */
+function MenuItem({ id, name }) {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <li className="">
+      <div className="">
+        <h3 className="">{name}</h3>
+        <button
+          className=""
+          onClick={() => deleteMenu(id)}
+        >
+          Delete
+        </button>
       </div>
+    </li>
+  );
+}
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+/**
+ * The main component of the application.
+ */
+export default function Home() {
+  const router = useRouter();
+  const [menus, setMenuItems] = useState([]);
+  const params = useSearchParams();
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+  // state for displaying a success message
+  const [successMessage, setSuccessMessage] = useState({
+    show: false,
+    type: "",
+  });
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+  // state for displaying an error message
+  const [errorMessage, setErrorMessage] = useState(null);
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+  // fetch menu items on component mount
+  useEffect(() => {
+    getAllMenus().then(setMenuItems);
+  }, []);
+
+  // detect changes in url params for success messages
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(successMessage.show) {
+        setSuccessMessage({
+          show: false,
+          type: "",
+        });
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [params, router]);
+
+  // automatically hide success message after 3 seconds
+  useEffect(() => {
+    if (successMessage.show) {
+      setTimeout(() => {
+        setSuccessMessage({
+          show: false,
+          type: "",
+        });
+      }, 5000);
+    }
+  }, [successMessage]);
+
+  // handle deletion of a menu item
+  const handleDelete = (id) => {
+    setMenuItems((items) => items.filter((item) => item.id !== id));
+  };
+
+  return (
+    <main className="">
+      <h1 className="">Menu</h1>
+      <ul className="">
+        {menus.map((menu) => (
+          <MenuItem
+            key={menu.id}
+            id={menu.id}
+            name={menu.name}
+            handleDelete={handleDelete}
+          />
+        ))}
+      </ul>
     </main>
   );
 }
+
